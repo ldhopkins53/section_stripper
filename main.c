@@ -14,8 +14,19 @@ struct elf_handle {
   size_t file_size;
 };
 
+size_t get_file_size(const char *filename) {
+  struct stat file_stat;
+  stat(filename, &file_stat);
+  return file_stat.st_size;
+}
+
 struct elf_handle read_elf_file(const char *filename) {
-  // Open file to read/wrtite
+  /*
+   * Read the elf file and build a handle containing important
+   * internal information about it
+   */
+
+  // Open file to read/write
   printf("[+] Opening %s\n", filename);
   FILE *fd = fopen(filename, "rw+");
   if (fd == NULL) {
@@ -23,10 +34,7 @@ struct elf_handle read_elf_file(const char *filename) {
     exit(EXIT_FAILURE);
   }
 
-  // Get file size
-  struct stat file_stat;
-  stat(filename, &file_stat);
-  size_t file_size = file_stat.st_size;
+  size_t file_size = get_file_size(filename);
   printf("[+] File is %lu bytes\n", file_size);
 
   // Map file into memory
